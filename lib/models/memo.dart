@@ -15,6 +15,14 @@ class MemoModel {
   DateTime get created => _created;
   Color? get backgroundColor => _backgroundColor;
 
+  String get key => "$_created";
+
+  void update({String? title, String? text, Color? backgroundColor}) {
+    if (title != null) _title = title;
+    if (text != null) _text = text;
+    if (backgroundColor != null) _backgroundColor = backgroundColor;
+  }
+
   MemoModel({String? title, String? text, Color? backgroundColor})
       : this._title = title,
         this._text = text,
@@ -26,7 +34,7 @@ class MemoModel {
   MemoModel.fromJson(Map<String?, dynamic> json)
       : this._title = json['title'],
         this._text = json['text'],
-        this._created = DateTime.fromMillisecondsSinceEpoch(json['created']!),
+        this._created = DateTime.fromMicrosecondsSinceEpoch(json['created']!),
         this._backgroundColor = json['backgroundColor'] != null
             ? Color(json['backgroundColor'])
             : defaultMemoBackgroundColor {
@@ -37,7 +45,7 @@ class MemoModel {
     final Map<String?, dynamic> data = new Map<String?, dynamic>();
     data['title'] = this._title;
     data['text'] = this._text;
-    data['created'] = this._created.millisecondsSinceEpoch;
+    data['created'] = this._created.microsecondsSinceEpoch;
     data['backgroundColor'] = this._backgroundColor?.value;
     return data;
   }

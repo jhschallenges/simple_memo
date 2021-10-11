@@ -35,11 +35,18 @@ class MemoController extends GetxController {
   }
 
   void addLast(MemoModel memo) {
-    final _key = "${memo.created}";
-
-    _box.write(_key, memo.toJson()); // write
-    _memoKeyIndexes.add(_key); // add key
+    log("${memo.key}");
+    _box.write(memo.key, memo.toJson()); // write
+    _memoKeyIndexes.add(memo.key); // add key
     _box.write("memoIndexes", _memoKeyIndexes); // save
+
+    update();
+  }
+
+  void updateMemo(MemoModel memo) {
+    log("${memo.key}");
+
+    _box.write(memo.key, memo.toJson()); // write
 
     update();
   }
