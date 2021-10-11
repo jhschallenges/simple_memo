@@ -1,7 +1,5 @@
 import 'dart:developer';
 
-import 'dart:collection';
-
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -10,22 +8,19 @@ import 'package:simple_memo/models/memo.dart';
 class MemoController extends GetxController {
   final _box = GetStorage();
 
-  // final List<MemoModel> _memos = [];
   late final List<String> _memoKeyIndexes;
+  late final List<String> _rubbishMemoKeyIndexes; // 휴지통
 
   bool isLoading = true;
 
   int get lenght => _memoKeyIndexes.length;
-  // UnmodifiableListView<MemoModel> get memos => UnmodifiableListView(_memos);
+  int get rubbishMemoLenght => _rubbishMemoKeyIndexes.length;
 
   void init() {
     // init _memoKeyIndexes
-    _memoKeyIndexes = List<String>.from(_box.read("memoIndexes"));
-
-    // // create list
-    // for (String i in _memoKeyIndexes) {
-    //   _memos.add(MemoModel.fromJson(_box.read(i)));
-    // }
+    _memoKeyIndexes = List<String>.from(_box.read("memoIndexes") ?? []);
+    _rubbishMemoKeyIndexes =
+        List<String>.from(_box.read("rubbishMemoIndexes") ?? []);
 
     isLoading = false;
     update();
@@ -35,26 +30,65 @@ class MemoController extends GetxController {
     return MemoModel.fromJson(_box.read(_memoKeyIndexes[i]));
   }
 
+  MemoModel rubbishMemoAt(int i) {
+    return MemoModel.fromJson(_box.read(_rubbishMemoKeyIndexes[i]));
+  }
+
   void addLast(MemoModel memo) {
     final _key = "${memo.created}";
 
-    // save at localstorage
     _box.write(_key, memo.toJson()); // write
     _memoKeyIndexes.add(_key); // add key
     _box.write("memoIndexes", _memoKeyIndexes); // save
 
+    update();
+  }
+
+  /// 해당 인덱스의 메모를 휴지통으로
+  void moveToRubbishBinAt(int index) {
     // live list
-    // _memos.add(memo);
+    _rubbishMemoKeyIndexes.add(_memoKeyIndexes[index]);
+    _memoKeyIndexes.removeAt(index);
+
+    // save at localstorage
+    _box.write("rubbishMemoIndexes", _rubbishMemoKeyIndexes);
+    _box.write("memoIndexes", _memoKeyIndexes);
 
     update();
   }
 
-  void removeAt(int index) {
+  void restoreMemoInRubbishBinAt(int index) {
     // live list
-    _memoKeyIndexes.removeAt(index);
+    _memoKeyIndexes.add(_rubbishMemoKeyIndexes[index]);
+    _rubbishMemoKeyIndexes.removeAt(index);
 
     // save at localstorage
     _box.write("memoIndexes", _memoKeyIndexes);
+    _box.write("rubbishMemoIndexes", _rubbishMemoKeyIndexes);
+
+    update();
+  }
+
+  void removeMemoInRubbishBinAt(int index) {
+    String _key = _rubbishMemoKeyIndexes[index];
+
+    // live list
+    _rubbishMemoKeyIndexes.removeAt(index);
+
+    // save at localstorage
+    _box.write("rubbishMemoIndexes", _rubbishMemoKeyIndexes);
+    _box.remove(_key);
+
+    update();
+  }
+
+  void clearRubbishBin() {
+    // save at localstorage
+    _box.remove("rubbishMemoIndexes");
+    _rubbishMemoKeyIndexes.forEach((_key) => _box.remove(_key));
+
+    // live list
+    _rubbishMemoKeyIndexes.clear();
 
     update();
   }

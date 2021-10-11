@@ -8,33 +8,55 @@ import 'package:simple_memo/blocs/memoCtrl.dart';
 
 import 'package:simple_memo/models/memo.dart';
 
-class MemoList extends StatelessWidget {
+import 'package:simple_memo/widgets/dialog/warning.dart';
+
+class RubbishMemoList extends StatelessWidget {
   final MemoController _memoController = Get.find();
 
-  MemoList({Key? key}) : super(key: key);
+  RubbishMemoList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: GetBuilder<MemoController>(
-        builder: (_) {
-          return ReorderableListView.builder(
-              itemBuilder: _dismissibleItemBuilder,
-              itemCount: _memoController.lenght,
-              onReorder: _memoController.reorder);
-        },
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Rubbish Bin"),
+        actions: [
+          IconButton(
+              padding: EdgeInsets.only(right: SizeConfig.defaultSize * 2.7),
+              icon: Icon(
+                Icons.delete_forever,
+                size: SizeConfig.defaultSize * 3.3,
+              ),
+              onPressed: () {
+                Get.dialog(ClearRubbishBinWarning());
+              })
+        ],
+      ),
+      body: Container(
+        child: GetBuilder<MemoController>(
+          builder: (_) {
+            return ListView.builder(
+                itemBuilder: _dismissibleItemBuilder,
+                itemCount: _memoController.rubbishMemoLenght);
+          },
+        ),
       ),
     );
   }
 
   Dismissible _dismissibleItemBuilder(BuildContext context, int index) {
-    MemoModel _memo = _memoController.memoAt(index);
+    MemoModel _memo = _memoController.rubbishMemoAt(index);
     final _key = Key("${_memo.created}");
 
     return Dismissible(
       key: _key,
       onDismissed: (DismissDirection direction) {
-        _memoController.moveToRubbishBinAt(index);
+        if (direction == DismissDirection.startToEnd) {
+          _memoController.removeMemoInRubbishBinAt(index);
+        } else {
+          _memoController.restoreMemoInRubbishBinAt(index);
+        }
       },
       background: Container(
         color: Colors.red,
@@ -46,11 +68,11 @@ class MemoList extends StatelessWidget {
         ),
       ),
       secondaryBackground: Container(
-        color: Colors.red,
+        color: Colors.green,
         padding: EdgeInsets.only(right: SizeConfig.defaultSize),
         alignment: Alignment.centerRight,
         child: Icon(
-          Icons.delete_forever,
+          Icons.restore,
           size: SizeConfig.defaultSize * 4,
         ),
       ),

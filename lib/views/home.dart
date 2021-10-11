@@ -8,6 +8,8 @@ import 'package:simple_memo/views/memo_list.dart';
 
 import 'package:simple_memo/widgets/bottom_sheet/memo.dart';
 
+import 'package:simple_memo/widgets/drawer/home.dart';
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -17,6 +19,7 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text("Simple Memo")),
+      drawer: HomeDrawer(),
       body: MemoList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
