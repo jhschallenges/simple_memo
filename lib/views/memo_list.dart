@@ -36,7 +36,26 @@ class MemoList extends StatelessWidget {
       onDismissed: (DismissDirection direction) {
         _memoController.removeAt(index);
       },
+      background: Container(
+        color: Colors.red,
+        padding: EdgeInsets.only(left: SizeConfig.defaultSize),
+        alignment: Alignment.centerLeft,
+        child: Icon(
+          Icons.delete_forever,
+          size: SizeConfig.defaultSize * 4,
+        ),
+      ),
+      secondaryBackground: Container(
+        color: Colors.red,
+        padding: EdgeInsets.only(right: SizeConfig.defaultSize),
+        alignment: Alignment.centerRight,
+        child: Icon(
+          Icons.delete_forever,
+          size: SizeConfig.defaultSize * 4,
+        ),
+      ),
       child: Container(
+        width: SizeConfig.screenWidth,
         margin: EdgeInsets.symmetric(
           vertical: SizeConfig.defaultSize * 0.5,
           horizontal: SizeConfig.defaultSize * 2,
@@ -49,8 +68,14 @@ class MemoList extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text("${_memo.title}"),
-            Text("${_memo.text}"),
+            Text(
+              "${_memo.title}",
+              style: TextStyle(fontSize: SizeConfig.defaultSize * 3),
+            ),
+            Text(
+              "${_memo.text}",
+              style: TextStyle(fontSize: SizeConfig.defaultSize * 2),
+            ),
           ],
         ),
       ),
