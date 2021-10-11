@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jhschallenges.simple_memo.simple_memo">
    <application
-        android:label="simple_memo"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Simple Memo"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
